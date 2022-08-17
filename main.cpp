@@ -1,25 +1,22 @@
-// g++ main.cpp objects.cpp glfw3dll.lib -l opengl32
+// g++ main.cpp glfw3dll.lib -l opengl32
 #include "GL/glfw3.h"
 #include <iostream>
 #include <cmath>
 
+#include "model.h"
 
-float speed = 0.0003f;
-float x_speed = 0.003f;
+float speed = 0.0002f;
+float x_speed = 0.002f;
 float angle = 0.0f;
 
-float rocket_top = -0.9f;
-float rocket_bottom = -0.6f;
+float rocket_top = -0.95f;
+float rocket_bottom = -0.85f;
 float rocket_x = 0.05f;
 
-extern char a;
-extern char d;
-
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        {glfwSetWindowShouldClose(window, GLFW_TRUE);}
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
 
     if (key == GLFW_KEY_A && action == GLFW_REPEAT || key == GLFW_KEY_A && action == GLFW_PRESS) {
         angle -= 5.0f; 
@@ -37,21 +34,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 
-void atmosphere();
-void rocket(float rocket_top, float rocket_bottom, float rocket_x);
-void keys();
-
-
-int main(void)
-{
+int main(void) {
     GLFWwindow* window;
+    RocketNN Rocket;
 
     if (!glfwInit())
         return -1;
 
     window = glfwCreateWindow(800, 800, "Rocket NEAT AI", NULL, NULL);
-    if (!window)
-    {
+    if (!window) {
         glfwTerminate();
         return -1;
     }
@@ -59,27 +50,54 @@ int main(void)
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
 
-
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(.5,.7,.8,.5);
 
         atmosphere();
-
-        if (rocket_top >= 1.0f) {rocket_top = -0.9f; rocket_bottom = -0.6f;} // Repeat when is touches atmosphere
+        keys();
 
         float rotation = angle*1/360;
         float top_movement = speed - rotation * speed;
         float side_movement = rotation * x_speed;
-
+        
         if (std::fabs(rotation) > 0.25f) {
-            rocket(rocket_top -= top_movement, rocket_bottom -= top_movement, rocket_x += side_movement);
+            Rocket.rocket(
+                rocket_top -= top_movement, 
+                rocket_bottom -= top_movement, 
+                rocket_x += side_movement, 
+                255,0,0
+            );
         } else {
-            rocket(rocket_top += top_movement, rocket_bottom += top_movement, rocket_x += side_movement);
+            Rocket.rocket(
+                rocket_top += top_movement, 
+                rocket_bottom += top_movement, 
+                rocket_x += side_movement, 
+                255,0,0
+            );
         }
 
-        keys();
+        if (rocket_bottom >= std::cos(random_num/41-0.5)-0.2 && 
+            rocket_x-0.03 <= random_num/41-0.5 && 
+            rocket_x+0.03 >= random_num/41-0.5) {
+
+            std::cout << "Good!" << std::endl;
+            rocket_top = -0.95f; 
+            rocket_bottom = -0.85f; 
+            angle = 0.0f;
+            random_num = random_number(); 
+            
+        } else if (rocket_bottom >= std::cos(rocket_x)-0.2 || 
+            rocket_x <= -1.0 || rocket_x >= 1.0 || 
+            rocket_bottom <= -1.0) {
+
+            std::cout << "Bad" << std::endl;
+            rocket_top = -0.95f; 
+            rocket_bottom = -0.85f;  
+            rocket_x = 0.05f; 
+            angle = 0.0f;
+            random_num = random_number();
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
