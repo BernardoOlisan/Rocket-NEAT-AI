@@ -29,21 +29,22 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main(void) {
     GLFWwindow* window;
+    GLFWwindow* nn_window;
 
     if (!glfwInit())
         return -1;
 
     window = glfwCreateWindow(800, 800, "Rocket NEAT AI", NULL, NULL);
+    nn_window = glfwCreateWindow(400, 400, "Neural Network Structure", NULL, window);
     if (!window) {
         glfwTerminate();
         return -1;
     }
 
-    glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
 
-
     while (!glfwWindowShouldClose(window)) {
+        glfwMakeContextCurrent(window);
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(.5,.7,.8,.5);
 
@@ -53,6 +54,18 @@ int main(void) {
         Rocket.rocket(255, 255, 0);
 
         glfwSwapBuffers(window);
+        glfwPollEvents();
+
+
+        glfwMakeContextCurrent(nn_window);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0,0,0,0);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        glEnable( GL_BLEND );
+
+        Rocket.draw_nn();
+
+        glfwSwapBuffers(nn_window);
         glfwPollEvents();
     }
 
