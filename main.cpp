@@ -42,7 +42,6 @@ int main(void) {
     }
 
     glfwSetKeyCallback(window, key_callback);
-
     while (!glfwWindowShouldClose(window)) {
         glfwMakeContextCurrent(window);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -52,6 +51,7 @@ int main(void) {
         keys();
 
         Rocket.rocket(255, 255, 0);
+        Rocket.weighted_sum();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
