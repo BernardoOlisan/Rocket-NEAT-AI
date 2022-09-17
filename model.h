@@ -96,16 +96,9 @@ public:
             {10, 0} // {right, value}
         },
         { // Hidden Nodes
-            // {11, 0.3, 0}, // {neuron number, neuron position(0.3 is the starting), value}
-            // {12, 0.3, 0},
-            // {13, 0.3, 0}
-            {11, 0.3, 0},
-            {12, 0.3, 0},
-            {13, 0.3, 0},
-            {14, 0.3, 0},
-            {15, 0.3, 0},
-            {16, 0.3, 0}
-            
+            {11, 0.5, 0}, // {neuron number, neuron position(0.5 is the starting), value}
+            {12, 0.5, 0},
+            {13, 0.5, 0}
         }
     };
 
@@ -113,181 +106,60 @@ public:
     std::vector<std::vector<float>> encoding_scheme_connections = {
         { // {In, Out, Out position neuron, Weight value, enable-disable(1-0), innovation number}
             1, 
-            9,
+            11,
             0, 
             0.1, 
             std::max(float(0), float(0.1/std::fabs(0.1))), 
             1,
         },
-        {
-            12, 
-            14,
+        { 
+            2, 
+            11,
+            0, 
+            0.2, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
+        },
+        { 
+            8, 
+            13,
             0, 
             0.1, 
             std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,   
+            1,
         },
-        {
-            14,
-            16,
-            0,
-            0.1,
-            std::max(float(0), float(0.1/std::fabs(0.1))),
-            2,
+        { 
+            11, 
+            12,
+            0, 
+            0.3, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
         },
-        {
-            11,
-            11,
-            0,
-            0.1,
-            std::max(float(0), float(0.1/std::fabs(0.1))),
-            2,
-        }
-        // {
-        //     11,
-        //     10,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))),
-        //     3,
-        // }, 
-        // {
-        //     12,
-        //     13,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))),
-        //     3,
-        // },
-        // {
-        //     13,
-        //     10,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))),
-        //     3,
-        // }  
-
-        // {
-        //     1,
-        //     10,
-        //     0,
-        //     0.2,
-        //     std::max(float(0), float(0.2/std::fabs(0.2))), 
-        //     2,
-        // },
-        // {
-        //     2, 
-        //     9,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))), 
-        //     3,
-        // },
-        // {
-        //     2,
-        //     10,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     4
-        // },
-        // {
-        //     3,
-        //     9,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     5
-        // },
-        // {
-        //     3,
-        //     10,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     6
-        // },
-        // {
-        //     4,
-        //     9,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     7
-        // },
-        // {
-        //     4,
-        //     10,
-        //     0,
-        //     0.4,
-        //     std::max(float(0), float(0.4/std::fabs(0.4))), 
-        //     8
-        // },
-        // {
-        //     5,
-        //     9,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))), 
-        //     9
-        // },
-        // {
-        //     5,
-        //     10,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))), 
-        //     10
-        // },
-        // {
-        //     6,
-        //     9,
-        //     0,
-        //     0.2,
-        //     std::max(float(0), float(0.2/std::fabs(0.2))), 
-        //     11
-        // },
-        // {
-        //     6,
-        //     10,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     12
-        // },
-        // {
-        //     7,
-        //     9,
-        //     0,
-        //     0.3,
-        //     std::max(float(0), float(0.3/std::fabs(0.3))), 
-        //     13
-        // },
-        // {
-        //     7,
-        //     10,
-        //     0,
-        //     0.1,
-        //     std::max(float(0), float(0.1/std::fabs(0.1))), 
-        //     14
-        // },
-        // {
-        //     8,
-        //     9,
-        //     0,
-        //     -0.3,
-        //     std::max(float(0), float(-0.3/std::fabs(-0.3))), 
-        //     15
-        // },
-        // {
-        //     8,
-        //     10,
-        //     0,
-        //     0.5,
-        //     std::max(float(0), float(0.5/std::fabs(0.5))), 
-        //     16
-        // },
+        { 
+            13, 
+            12,
+            0, 
+            0.1, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
+        },
+        { 
+            12, 
+            10,
+            0, 
+            0.1, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
+        },
+        { 
+            12, 
+            9,
+            0, 
+            0.5, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
+        },
     };
 
 
@@ -431,7 +303,7 @@ public:
                             glPushMatrix();
                                 glBegin(GL_LINES);
                                     glVertex2f(-0.74, (float(i) * float(0.8) / 5) - 0.5);
-                                    glVertex2f(-0.36, encoding_scheme_connections[f][2]); 
+                                    glVertex2f(-encoding_scheme_nodes[2][j][1]-0.06, encoding_scheme_connections[f][2]); 
                                 glEnd();
                             glPopMatrix();       
                         }
@@ -484,11 +356,11 @@ public:
 
                     // Synapsis "In for hidden to hidden neurons"
                     for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0]) {
+                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
                             glPushMatrix();
                                 glBegin(GL_LINES);
-                                    glVertex2f(-0.24, (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
-                                    glVertex2f((encoding_scheme_nodes[2][i][1]-0.31), encoding_scheme_connections[f][2]); 
+                                    glVertex2f(0.0-encoding_scheme_nodes[2][i][1]+0.06, (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
+                                    glVertex2f(0.0-encoding_scheme_nodes[2][j][1]-0.06, encoding_scheme_connections[f][2]); 
                                 glEnd();
                             glPopMatrix();
                         } 
@@ -506,13 +378,32 @@ public:
             }
             
             // Check if hidden are connected with hidden to change the position of the out hidden one
+            int hiddentohiddentohidden = 0;
+            int someothernumber = 0;
             for (int f = 0; f < encoding_scheme_connections.size(); f++) {
                 if (encoding_scheme_connections[f][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[f][1] >= encoding_scheme_nodes[2][0][0]) {
+                    //int someothernumber = 0;
                     for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0]) {
-                            encoding_scheme_nodes[2][j][1] = -0.05;
-                        } 
-                    }
+                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
+                            //encoding_scheme_nodes[2][j][1] = -0.05;
+                            encoding_scheme_nodes[2][j][1] = (float(hiddentohiddentohidden) / 5 * -1)+0.30;
+                            
+                            int hiddenMultipleConnection = 0;
+                            for (int k = 0; k < encoding_scheme_connections.size(); k++) {
+                                if (encoding_scheme_connections[f][1] == encoding_scheme_connections[k][1]) {
+                                    hiddenMultipleConnection += 1;
+                                }
+                            }
+
+                            
+                            if (hiddenMultipleConnection >= 2) {
+                                someothernumber += 1;
+                                encoding_scheme_nodes[2][j][1] = encoding_scheme_nodes[2][j][1]-(float(hiddentohiddentohidden) / 10 * -1)+0.1;
+                            }
+
+                            hiddentohiddentohidden += 1;
+                        }
+                    } 
                 }
             }
 
@@ -546,61 +437,121 @@ public:
 
 
     void weighted_sum() {
-        float output1_neuron9_left = 0;
-        int n1 = 0;
         for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+            // Inputs to Hiddens
+            for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[2][j][0]) {
+                    for (int k = 0; k < encoding_scheme_nodes[0].size(); k++) {
+                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][k][0]) {
+                            encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][k][1]);
+                            // std::cout << "X" << encoding_scheme_connections[i][0] << std::endl;
+                            // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                            // std::cout << "X value: " << encoding_scheme_nodes[0][k][1] << std::endl;
+                            // std::cout << "Weighted sum: " << encoding_scheme_nodes[2][j][2] << std::endl;
+                        }
+                    }
+                }
+            }
+
+            // Hiddens to Hiddens
+            if (encoding_scheme_connections[i][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[i][1] >= encoding_scheme_nodes[2][0][0]) {
+                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                    if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[2][j][0]) {
+                        for (int k = 0; k < encoding_scheme_nodes[2].size(); k++) {
+                            if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][k][0]) {
+                                encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][k][2]);
+                            // std::cout << "Y" << encoding_scheme_connections[i][0] << std::endl;
+                            // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                            // std::cout << "Y value: " << encoding_scheme_nodes[2][k][2] << std::endl;
+                            // std::cout << "Weighted sum: " << encoding_scheme_nodes[2][j][2] << std::endl;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Hiddens to Outputs, left (output 9)
             if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][0][0]) {
-                output1_neuron9_left += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][n1][1]);
-                n1 += 1;
-            }
-        }
+                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
+                        encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
+                        // std::cout << "Z" << encoding_scheme_connections[i][0] << std::endl;
+                        // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                        // std::cout << "Z value: " << encoding_scheme_nodes[2][j][2] << std::endl;
+                        // std::cout << "Weighted sum: " << encoding_scheme_nodes[1][0][1] << std::endl;
+                    }
+                }
 
-        float output2_neuron10_right = 0;
-        int n2 = 0;
-        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+                // Input to Output, Left (output 9)
+                for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
+                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
+                        encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+                        // std::cout << "X" << encoding_scheme_connections[i][0] << std::endl;
+                        // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                        // std::cout << "X value: " << encoding_scheme_nodes[0][j][1] << std::endl;
+                        // std::cout << "Weighted sum: " << encoding_scheme_nodes[1][0][1] << std::endl;
+                    }
+                }
+            }
+            // Hiddens to Outputs, Right (output 10)
             if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][1][0]) {
-                output2_neuron10_right += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][n2][1]);
-                n2 += 1;
+                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
+                        encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
+                        // std::cout << "Z" << encoding_scheme_connections[i][0] << std::endl;
+                        // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                        // std::cout << "Z value: " << encoding_scheme_nodes[2][j][2] << std::endl;
+                        // std::cout << "Weighted sum: " << encoding_scheme_nodes[1][1][1] << std::endl;
+                    }
+                }
+                // Input to Output, Right (output 10)
+                for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
+                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
+                        encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+                        // std::cout << "X" << encoding_scheme_connections[i][0] << std::endl;
+                        // std::cout << "Weight: " << encoding_scheme_connections[i][3] << std::endl;
+                        // std::cout << "X value: " << encoding_scheme_nodes[0][j][1] << std::endl;
+                        // std::cout << "Weighted sum: " << encoding_scheme_nodes[1][0][1] << std::endl;
+                    }
+                }
             }
         }
 
-        // Adding values to output neurons
-        encoding_scheme_nodes[1][0][1] = output1_neuron9_left;
-        encoding_scheme_nodes[1][1][1] = output2_neuron10_right;
-        // std::cout << "Output Neuron 9 = " << output1_neuron9_left << std::endl;
-        // std::cout << "Output Neuron 10 = " << output2_neuron10_right << std::endl;
-        if (output1_neuron9_left > output2_neuron10_right && output1_neuron9_left > 0) {
+
+        // Action rocket stuff
+        if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
             std::cout << "left" << std::endl;
             angle -= 0.01;
             a = GL_TRIANGLE_FAN;
             d = GL_LINE_STRIP;
 
-        } else if (output1_neuron9_left < output2_neuron10_right && output2_neuron10_right > 0) {
+        } else if (encoding_scheme_nodes[1][0][1] < encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][1][1] > 0) {
             std::cout << "right" << std::endl;
             angle += 0.01;
             d = GL_TRIANGLE_FAN;
             a = GL_LINE_STRIP;
         } 
         //std::cout << "max = " << std::max(output1_neuron9, output2_neuron10) << std::endl;
+
+
+        // Cleaning the hidden and output nodes data (weighted sum)
+        for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
+            encoding_scheme_nodes[2][i][2] = 0;
+        }
+        for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
+            encoding_scheme_nodes[1][i][1] = 0;
+        }
     }
 };
 
 
 /*
 FIXME:
-Problems in 2.1 and 2.2, everything works well, the problem is that if we connect 11 to 12 and then 
-12 to 13 it doesn't work.
-
-The other one is that if we connect 12 to 12 it bugs, is not possible (only in hiddens).
+None
 */
-
 
 /* 
 TODO:
-2.1 Extend the dynamic vector for hidden neurons, control everything with the arrays
-2.2 the neurons nodes position is going to change the depending on how many hidden nodes they will have
-2.3 Do the dynamic weighted sum with input neurons
-
 2.4 Clean code
 
 EXTRA.- Check if the weighted sum is correct
