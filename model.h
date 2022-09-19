@@ -112,6 +112,14 @@ public:
             std::max(float(0), float(0.1/std::fabs(0.1))), 
             1,
         },
+        {
+            4,
+            10,
+            0,
+            0.1, 
+            std::max(float(0), float(0.1/std::fabs(0.1))), 
+            1,
+        },
         { 
             2, 
             11,
@@ -284,7 +292,7 @@ public:
             glEnd();
             glColor3f(1, 1, 1);
 
-            // Synapsis "In"
+            // Input layer (synapsis, INPUT in output)
             for (int f = 0; f < encoding_scheme_connections.size(); f++) {
                 if (encoding_scheme_connections[f][0] == i+1) {
                     for (int j = 0; j < encoding_scheme_nodes[1].size(); j++) {
@@ -312,101 +320,10 @@ public:
             }
         }
 
-        // Output layer (neurons)
-        for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
-            // Synapsis "Out in output neurons"
-            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
-                for (int j = 0; j < encoding_scheme_nodes[1].size(); j++) {
-                    if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[1][j][0]) {
-                        encoding_scheme_connections[f][2] = (float(j) * float(0.8) / 5) + 0.01;
-                    }
-                }
-            }
-
-            glBegin(GL_POLYGON);
-                for (int f = 0; f < 20; f++)
-                {
-                    float theta = 2.0 * 3.1415926 * float(f) / float(20);
-
-                    float x = 0.06 * std::cos(theta);
-                    float y = 0.06 * std::sin(theta);
-
-                    glVertex2f(x + 0.6, y + float(i) * float(0.8) / 5);
-                }
-            glEnd();
-        }
 
         // Hidden nodes (neurons)
         int active_neuron = 0;
-
         for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
-            // Synapsis "In for hidden neurons"
-            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
-                if (encoding_scheme_connections[f][0] == encoding_scheme_nodes[2][i][0]) {
-                    for (int j = 0; j < encoding_scheme_nodes[1].size(); j++) {
-                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[1][j][0]) {
-                            glPushMatrix();
-                                glBegin(GL_LINES);
-                                    glVertex2f(-0.24 - (encoding_scheme_nodes[2][i][1]-0.3), (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
-                                    glVertex2f(0.6, encoding_scheme_connections[f][2]); 
-                                glEnd();
-                            glPopMatrix();
-                        }
-                    }
-
-                    // Synapsis "In for hidden to hidden neurons"
-                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
-                            glPushMatrix();
-                                glBegin(GL_LINES);
-                                    glVertex2f(0.0-encoding_scheme_nodes[2][i][1]+0.06, (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
-                                    glVertex2f(0.0-encoding_scheme_nodes[2][j][1]-0.06, encoding_scheme_connections[f][2]); 
-                                glEnd();
-                            glPopMatrix();
-                        } 
-                    }
-                }
-            }
-
-            // Synapsis "Out in hidden neurons"
-            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
-                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++)  {
-                    if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0]) {
-                        encoding_scheme_connections[f][2] = (float(j) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10);
-                    }
-                }
-            }
-            
-            // Check if hidden are connected with hidden to change the position of the out hidden one
-            int hiddentohiddentohidden = 0;
-            int someothernumber = 0;
-            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
-                if (encoding_scheme_connections[f][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[f][1] >= encoding_scheme_nodes[2][0][0]) {
-                    //int someothernumber = 0;
-                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
-                            //encoding_scheme_nodes[2][j][1] = -0.05;
-                            encoding_scheme_nodes[2][j][1] = (float(hiddentohiddentohidden) / 5 * -1)+0.30;
-                            
-                            int hiddenMultipleConnection = 0;
-                            for (int k = 0; k < encoding_scheme_connections.size(); k++) {
-                                if (encoding_scheme_connections[f][1] == encoding_scheme_connections[k][1]) {
-                                    hiddenMultipleConnection += 1;
-                                }
-                            }
-
-                            
-                            if (hiddenMultipleConnection >= 2) {
-                                someothernumber += 1;
-                                encoding_scheme_nodes[2][j][1] = encoding_scheme_nodes[2][j][1]-(float(hiddentohiddentohidden) / 10 * -1)+0.1;
-                            }
-
-                            hiddentohiddentohidden += 1;
-                        }
-                    } 
-                }
-            }
-
             glColor3f(1, 1, 1);
             glBegin(GL_LINE_LOOP);
                 for(int f = 0; f < 20; f++)
@@ -432,11 +349,98 @@ public:
                 }
             glEnd();
             glColor3f(1, 1, 1);
+
+            // Hidden nodes (synapsis, INPUT in output)
+            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
+                if (encoding_scheme_connections[f][0] == encoding_scheme_nodes[2][i][0]) {
+                    for (int j = 0; j < encoding_scheme_nodes[1].size(); j++) {
+                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[1][j][0]) {
+                            glPushMatrix();
+                                glBegin(GL_LINES);
+                                    glVertex2f(-0.24 - (encoding_scheme_nodes[2][i][1]-0.3), (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
+                                    glVertex2f(0.6, encoding_scheme_connections[f][2]); 
+                                glEnd();
+                            glPopMatrix();
+                        }
+                    }
+
+                    // Hidden nodes (synapsis, INPUT in hidden)
+                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
+                            glPushMatrix();
+                                glBegin(GL_LINES);
+                                    glVertex2f(0.0-encoding_scheme_nodes[2][i][1]+0.06, (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
+                                    glVertex2f(0.0-encoding_scheme_nodes[2][j][1]-0.06, encoding_scheme_connections[f][2]); 
+                                glEnd();
+                            glPopMatrix();
+                        } 
+                    }
+                }
+            }
+
+            // Hidden nodes (synapsis, INPUT in hidden "y")
+            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
+                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++)  {
+                    if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0]) {
+                        encoding_scheme_connections[f][2] = (float(j) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10);
+                    }
+                }
+            }
+            
+            // Change Hidden neurons position if Hidden to Hidden Connections
+            int HiddentoHiddenConnections = 0;
+            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
+                if (encoding_scheme_connections[f][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[f][1] >= encoding_scheme_nodes[2][0][0]) {
+                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                        if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[2][j][0] && encoding_scheme_connections[f][0] != encoding_scheme_connections[f][1]) {
+                            encoding_scheme_nodes[2][j][1] = (float(HiddentoHiddenConnections) / 5 * -1)+0.30;
+                            
+                            int CountHiddenMultipleConnections = 0;
+                            for (int k = 0; k < encoding_scheme_connections.size(); k++) {
+                                if (encoding_scheme_connections[f][1] == encoding_scheme_connections[k][1]) {
+                                    CountHiddenMultipleConnections += 1;
+                                }
+                            }
+
+                            if (CountHiddenMultipleConnections >= 2) {
+                                encoding_scheme_nodes[2][j][1] = encoding_scheme_nodes[2][j][1]-(float(HiddentoHiddenConnections) / 10 * -1)+0.1;
+                            }
+
+                            HiddentoHiddenConnections += 1;
+                        }
+                    } 
+                }
+            }
+        }
+
+
+        // Output layer (neurons)
+        for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
+            glBegin(GL_POLYGON);
+                for (int f = 0; f < 20; f++)
+                {
+                    float theta = 2.0 * 3.1415926 * float(f) / float(20);
+
+                    float x = 0.06 * std::cos(theta);
+                    float y = 0.06 * std::sin(theta);
+
+                    glVertex2f(x + 0.6, y + float(i) * float(0.8) / 5);
+                }
+            glEnd();
+
+            // Output layer (synapsis, INPUT in output "y")
+            for (int f = 0; f < encoding_scheme_connections.size(); f++) {
+                for (int j = 0; j < encoding_scheme_nodes[1].size(); j++) {
+                    if (encoding_scheme_connections[f][1] == encoding_scheme_nodes[1][j][0]) {
+                        encoding_scheme_connections[f][2] = (float(j) * float(0.8) / 5) + 0.01;
+                    }
+                }
+            }
         }
     }
 
 
-    void weighted_sum() {
+    void weighted_sum() {   
         for (int i = 0; i < encoding_scheme_connections.size(); i++) {
             // Inputs to Hiddens
             for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
@@ -531,8 +535,6 @@ public:
             d = GL_TRIANGLE_FAN;
             a = GL_LINE_STRIP;
         } 
-        //std::cout << "max = " << std::max(output1_neuron9, output2_neuron10) << std::endl;
-
 
         // Cleaning the hidden and output nodes data (weighted sum)
         for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
