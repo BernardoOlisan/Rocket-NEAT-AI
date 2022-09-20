@@ -372,7 +372,6 @@ public:
 
 
         // Hidden nodes (neurons)
-        int active_neuron = 0;
         for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
             glColor3f(1, 1, 1);
             glBegin(GL_LINE_LOOP);
@@ -386,19 +385,6 @@ public:
                     glVertex2f(x - encoding_scheme_nodes[2][i][1], y + (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
                 }
             glEnd();
-            glColor4f(1, 1, 1, active_neuron);
-            glBegin(GL_POLYGON);
-                for (int f = 0; f < 20; f++)
-                {
-                    float theta = 2.0 * 3.1415926 * float(f) / float(20);
-
-                    float x = 0.06 * std::cos(theta);
-                    float y = 0.06 * std::sin(theta);
-
-                    glVertex2f(x - encoding_scheme_nodes[2][i][1], y + (float(i) * float(0.8) / 5) - (float(encoding_scheme_nodes[2].size())*0.65/10));
-                }
-            glEnd();
-            glColor3f(1, 1, 1);
 
             // Hidden nodes (synapsis, INPUT in output)
             for (int f = 0; f < encoding_scheme_connections.size(); f++) {
@@ -466,6 +452,7 @@ public:
 
         // Output layer (neurons)
         for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
+            glColor3f(1, 1, 1);
             glBegin(GL_POLYGON);
                 for (int f = 0; f < 20; f++)
                 {
@@ -474,7 +461,7 @@ public:
                     float x = 0.06 * std::cos(theta);
                     float y = 0.06 * std::sin(theta);
 
-                    glVertex2f(x + 0.6, y + float(i) * float(0.8) / 5);
+                    glVertex2f(x + 0.66, y + float(i) * float(0.8) / 5);
                 }
             glEnd();
 
