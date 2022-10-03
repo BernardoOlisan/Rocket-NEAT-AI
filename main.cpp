@@ -5,8 +5,8 @@
 
 #include "model.h"
 
-RocketNN Rocket1;
-// RocketNN Rocket2;
+RocketNN Rocket[21];
+int species = 21;
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -14,14 +14,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
     
     if (key == GLFW_KEY_A && action == GLFW_REPEAT || key == GLFW_KEY_A && action == GLFW_PRESS) {
-        Rocket1.angle -= 5.0; 
+        Rocket[0].angle -= 5.0; 
         a = GL_TRIANGLE_FAN;
     } else {
         a = GL_LINE_STRIP;
     }
 
     if (key == GLFW_KEY_D && action == GLFW_REPEAT || key == GLFW_KEY_D && action == GLFW_PRESS) {
-        Rocket1.angle += 5.0;
+        Rocket[0].angle += 5.0;
         d = GL_TRIANGLE_FAN;
     } else {
         d = GL_LINE_STRIP;
@@ -43,6 +43,17 @@ int main(void) {
     }
 
     glfwSetKeyCallback(window, key_callback);
+
+    std::vector<std::vector<int>> colors;
+    for (int i = 0; i < species; i++) {
+        colors.push_back(
+            {
+                0 + rand() % (( 255 + 1 ) - 0), 
+                0 + rand() % (( 255 + 1 ) - 0), 
+                0 + rand() % (( 255 + 1 ) - 0)
+            });
+    }
+
     while (!glfwWindowShouldClose(window)) {
         glfwMakeContextCurrent(window);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -51,11 +62,19 @@ int main(void) {
         atmosphere();
         keys();
 
-        Rocket1.rocket(255, 255, 0);
-        Rocket1.weighted_sum();
-
-        // Rocket2.rocket(255, 0, 0);
-        // Rocket2.weighted_sum();
+        for (int i = 0; i < species; i++) {
+            Rocket[i].rocket(colors[i][0], colors[i][1], colors[i][2]);
+            Rocket[i].weighted_sum();
+        }
+        if (players_finished >= 20) {
+            random_point = random_number();
+            players_finished = 0;
+            for (int i = 0; i < species; i++) {
+                Rocket[i].finish = false;
+                Rocket[i].speed = 0.0004;
+                Rocket[i].x_speed = 0.004;
+            }
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -67,10 +86,19 @@ int main(void) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
         glEnable( GL_BLEND );
 
-        Rocket1.draw_nn();
+        std::vector<float> all_scores;
+        for (int i = 0; i < species; i++) {
+            all_scores.push_back(Rocket[i].score); 
+        }
+        int highest_score = std::distance(all_scores.begin(), std::find(all_scores.begin(), all_scores.end(), *std::max_element(all_scores.begin(), all_scores.end())));
+        Rocket[highest_score].draw_nn();
 
         glfwSwapBuffers(nn_window);
         glfwPollEvents();
+    }
+
+    for (int i = 0; i < species; i++) {
+        std::cout << i << " score: " << Rocket[i].score << std::endl;
     }
 
     glfwTerminate();

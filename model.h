@@ -18,7 +18,16 @@ int random_weight() {
     return std::rand() % 10 + (-1);
 }
 
+int random_input() {
+    return 1 + rand() % (( 8 + 1 ) - 1);
+}
+
+int random_output() {
+    return 9 + rand() % (( 10 + 1 ) - 9);
+}
+
 float random_point = random_number();
+int players_finished = 0;
 
 void atmosphere() {
     glPushMatrix();
@@ -76,7 +85,8 @@ public:
     float rocket_x = 0.00;
     float angle = 0.0;
 
-    float score = 0.0;
+    float score = 0.0; // 1 is the best
+    bool finish = false;
 
     // Neat Encoding Scheme "Genotype"
     // Nodes
@@ -96,20 +106,21 @@ public:
             {10, 0} // {right, value}
         },
         { // Hidden Nodes
-            {11, 0.5, 0}, // {neuron number, neuron position(0.5 is the starting), value}
+            // {11, 0.5, 0}, // {neuron number, neuron position(0.5 is the starting), value}
+            {0, 0, 0}
         }
     };
 
     // Connections
     std::vector<std::vector<float>> encoding_scheme_connections = {
-        { // {Input, Output, Out position neuron, Weight value, enable-disable(1-0), innovation number}
-            1, 
-            11,
-            0, 
-            0.1, 
-            0, 
-            1,
-        },
+        // { // {Input, Output, Out position neuron, Weight value, enable-disable(1-0), innovation number}
+        //     1, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     0, 
+        //     1,
+        // },
     };
 
 
@@ -138,11 +149,15 @@ public:
             rocket_bottom = -0.95; 
             rocket_x = 0.00; 
             angle = 0.0;
-            random_point = random_number(); 
+            speed = 0;
+            x_speed = 0;
+            finish = true;
+            players_finished += 1; 
+            score += 1;
             // modify weights each time it finish track
-            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-                encoding_scheme_connections[i][3] = float(random_weight())/10;
-            }
+            // for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+            //     encoding_scheme_connections[i][3] = float(random_weight())/10;
+            // }
         } else if (rocket_top >= std::cos(rocket_x) - 0.2 || 
                    rocket_x <= -1.0 || rocket_x >= 1.0 || 
                    rocket_top <= -1.0) {
@@ -151,11 +166,15 @@ public:
             rocket_bottom = -0.95;  
             rocket_x = 0.00; 
             angle = 0.0;
-            random_point = random_number();
+            speed = 0;
+            x_speed = 0;
+            finish = true;
+            players_finished += 1; 
+            score += encoding_scheme_nodes[0][7][1];
             // modify weights each time it finish track
-            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-                encoding_scheme_connections[i][3] = float(random_weight())/10;
-            }
+            // for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+            //     encoding_scheme_connections[i][3] = float(random_weight())/10;
+            // }
         }
 
         // Values for input neurons
@@ -201,6 +220,20 @@ public:
 
             glColor3f(1,1,1);
         glPopMatrix();
+
+        // Initial Mutation, blank population
+        if (encoding_scheme_connections.size() == 0) {
+            encoding_scheme_connections.push_back(
+                {
+                    float(random_input()), 
+                    float(random_output()),
+                    0, 
+                    float(random_weight())/10, 
+                    0, 
+                    1,       
+                }
+            );
+        }
     } 
 
 
@@ -370,109 +403,111 @@ public:
 
 
     void weighted_sum() { 
-        // Updating enable-disable connections value
-        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-            if (encoding_scheme_connections[i][3] > 0) {
-                encoding_scheme_connections[i][4] = 1;
-            } else {
-                encoding_scheme_connections[i][4] = 0;
-            }
-        }
-
-        // Inputs to Hiddens  
-        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-            for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[2][j][0]) {
-                    for (int k = 0; k < encoding_scheme_nodes[0].size(); k++) {
-                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][k][0]) {
-                            encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][k][1]);
-                        }
-                    }
+        if (!finish) { 
+            // Updating enable-disable connections value
+            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+                if (encoding_scheme_connections[i][3] > 0) {
+                    encoding_scheme_connections[i][4] = 1;
+                } else {
+                    encoding_scheme_connections[i][4] = 0;
                 }
             }
-        }
 
-        // Hiddens to Hiddens
-        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-            if (encoding_scheme_connections[i][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[i][1] >= encoding_scheme_nodes[2][0][0]) {
+            // Inputs to Hiddens  
+            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
                 for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
                     if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[2][j][0]) {
-                        for (int k = 0; k < encoding_scheme_nodes[2].size(); k++) {
-                            if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][k][0]) {
-                                encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][k][2]);
+                        for (int k = 0; k < encoding_scheme_nodes[0].size(); k++) {
+                            if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][k][0]) {
+                                encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][k][1]);
                             }
                         }
                     }
                 }
             }
-        }
 
-        // Hiddens to Outputs, left (output 9)
-        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-            if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][0][0]) {
-                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
-                        encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
-                    }
-                }
-
-                // Input to Output, Left (output 9)
-                for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
-                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
-                        encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+            // Hiddens to Hiddens
+            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+                if (encoding_scheme_connections[i][0] >= encoding_scheme_nodes[2][0][0] && encoding_scheme_connections[i][1] >= encoding_scheme_nodes[2][0][0]) {
+                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                        if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[2][j][0]) {
+                            for (int k = 0; k < encoding_scheme_nodes[2].size(); k++) {
+                                if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][k][0]) {
+                                    encoding_scheme_nodes[2][j][2] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][k][2]);
+                                }
+                            }
+                        }
                     }
                 }
             }
-            // Hiddens to Outputs, Right (output 10)
-            if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][1][0]) {
-                for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
-                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
-                        encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
+
+            // Hiddens to Outputs, left (output 9)
+            for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+                if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][0][0]) {
+                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
+                            encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
+                        }
+                    }
+
+                    // Input to Output, Left (output 9)
+                    for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
+                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
+                            encoding_scheme_nodes[1][0][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+                        }
                     }
                 }
-                // Input to Output, Right (output 10)
-                for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
-                    if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
-                        encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+                // Hiddens to Outputs, Right (output 10)
+                if (encoding_scheme_connections[i][1] == encoding_scheme_nodes[1][1][0]) {
+                    for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
+                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[2][j][0]) {
+                            encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[2][j][2]);
+                        }
+                    }
+                    // Input to Output, Right (output 10)
+                    for (int j = 0; j < encoding_scheme_nodes[0].size(); j++) {
+                        if (encoding_scheme_connections[i][0] == encoding_scheme_nodes[0][j][0]) {
+                            encoding_scheme_nodes[1][1][1] += (encoding_scheme_connections[i][3] * encoding_scheme_nodes[0][j][1]);
+                        }
                     }
                 }
             }
-        }
 
-        // DELETE THIS, is just for debug cases
-        // for (int i = 0; i < encoding_scheme_nodes[0].size(); i++) {
-        //     std::cout << "X" << encoding_scheme_nodes[0][i][0] << " = " << encoding_scheme_nodes[0][i][1] << std::endl;
-        // }
-        // std::cout << "----------Hidden NEURONS-----------" << std::endl;
-        // for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
-        //     std::cout << "Y" << encoding_scheme_nodes[2][i][0] << " = " << encoding_scheme_nodes[2][i][2] << std::endl;       
-        // }
-        // std::cout << "----------OUTPUT NEURONS-----------" << std::endl;
-        // for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
-        //     std::cout << "Z" << encoding_scheme_nodes[1][i][0] << " = " << encoding_scheme_nodes[1][i][1] << std::endl;
-        // }
+            // DELETE THIS, is just for debug cases
+            // for (int i = 0; i < encoding_scheme_nodes[0].size(); i++) {
+            //     std::cout << "X" << encoding_scheme_nodes[0][i][0] << " = " << encoding_scheme_nodes[0][i][1] << std::endl;
+            // }
+            // std::cout << "----------Hidden NEURONS-----------" << std::endl;
+            // for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
+            //     std::cout << "Y" << encoding_scheme_nodes[2][i][0] << " = " << encoding_scheme_nodes[2][i][2] << std::endl;       
+            // }
+            // std::cout << "----------OUTPUT NEURONS-----------" << std::endl;
+            // for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
+            //     std::cout << "Z" << encoding_scheme_nodes[1][i][0] << " = " << encoding_scheme_nodes[1][i][1] << std::endl;
+            // }
 
 
-        // Action rocket stuff
-        if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
-            // std::cout << "left" << std::endl;
-            angle -= 0.01;
-            a = GL_TRIANGLE_FAN;
-            d = GL_LINE_STRIP;
+            // Action rocket stuff
+            if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
+                // std::cout << "left" << std::endl;
+                angle -= 0.01;
+                a = GL_TRIANGLE_FAN;
+                d = GL_LINE_STRIP;
 
-        } else if (encoding_scheme_nodes[1][0][1] < encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][1][1] > 0) {
-            // std::cout << "right" << std::endl;
-            angle += 0.01;
-            d = GL_TRIANGLE_FAN;
-            a = GL_LINE_STRIP;
-        } 
+            } else if (encoding_scheme_nodes[1][0][1] < encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][1][1] > 0) {
+                // std::cout << "right" << std::endl;
+                angle += 0.01;
+                d = GL_TRIANGLE_FAN;
+                a = GL_LINE_STRIP;
+            } 
 
-        // Cleaning the hidden and output nodes data (weighted sum)
-        for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
-            encoding_scheme_nodes[2][i][2] = 0;
-        }
-        for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
-            encoding_scheme_nodes[1][i][1] = 0;
+            // Cleaning the hidden and output nodes data (weighted sum)
+            for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
+                encoding_scheme_nodes[2][i][2] = 0;
+            }
+            for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
+                encoding_scheme_nodes[1][i][1] = 0;
+            }
         }
     }
 };
@@ -480,12 +515,24 @@ public:
 
 /*
 FIXME:
-none
+5.1. If I make the initial mutation we need to add a hidden neuron :(
 */
 
 /* 
 TODO:
 5. Make the evolve process 
+DONE but Solve porblem 5.1. Make the initial mutation, only add one connection to blank population of 20 or 10
+DONE 5.2. Evaluate population, each period is going to end when it crash, then add the score to each rocket.
+5.3. Divide the population based on score and generate a new population with the well-performing half using the speciation, crossover and mutation techniques. 
+    a) destroy the bad-performing half, we stay with 10
+    b) Crossover them like this 1-10 (Crossover works with IN, we can get it like this 1->4 = 14, IN = 14) 
+                                2-9
+                                3-8
+                                4-7
+                                5-6
+    c) we stay with 5 offspring children
+    d) multiply them by 4(repeat first offspring 4 times), and we end up with 20 again
+    e) Mutate 20 of them randomdly again, repeat the process.
 
 6. clean code "User define glObjects to objects.h file"
 
