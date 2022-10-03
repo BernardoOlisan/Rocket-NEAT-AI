@@ -97,125 +97,17 @@ public:
         },
         { // Hidden Nodes
             {11, 0.5, 0}, // {neuron number, neuron position(0.5 is the starting), value}
-            {12, 0.5, 0},
-            {13, 0.5, 0},
-            {14, 0.5, 0},
-            {15, 0.5, 0}
         }
     };
 
     // Connections
     std::vector<std::vector<float>> encoding_scheme_connections = {
-        { // {In, Out, Out position neuron, Weight value, enable-disable(1-0), innovation number}
+        { // {Input, Output, Out position neuron, Weight value, enable-disable(1-0), innovation number}
             1, 
             11,
             0, 
             0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            11, 
-            12,
             0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            12, 
-            13,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            13, 
-            14,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            14, 
-            15,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            8, 
-            15,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            7, 
-            14,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            6, 
-            13,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            5, 
-            12,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            4, 
-            11,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            2, 
-            9,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            3, 
-            10,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            15, 
-            9,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
-            1,
-        },
-        {
-            15, 
-            10,
-            0, 
-            0.1, 
-            std::max(float(0), float(0.1/std::fabs(0.1))), 
             1,
         },
     };
@@ -478,6 +370,15 @@ public:
 
 
     void weighted_sum() { 
+        // Updating enable-disable connections value
+        for (int i = 0; i < encoding_scheme_connections.size(); i++) {
+            if (encoding_scheme_connections[i][3] > 0) {
+                encoding_scheme_connections[i][4] = 1;
+            } else {
+                encoding_scheme_connections[i][4] = 0;
+            }
+        }
+
         // Inputs to Hiddens  
         for (int i = 0; i < encoding_scheme_connections.size(); i++) {
             for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
@@ -554,13 +455,13 @@ public:
 
         // Action rocket stuff
         if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
-            std::cout << "left" << std::endl;
+            // std::cout << "left" << std::endl;
             angle -= 0.01;
             a = GL_TRIANGLE_FAN;
             d = GL_LINE_STRIP;
 
         } else if (encoding_scheme_nodes[1][0][1] < encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][1][1] > 0) {
-            std::cout << "right" << std::endl;
+            // std::cout << "right" << std::endl;
             angle += 0.01;
             d = GL_TRIANGLE_FAN;
             a = GL_LINE_STRIP;
@@ -584,15 +485,9 @@ none
 
 /* 
 TODO:
-2.5 Depending on the weighted sum, the hidden neurons will activate
-
-3. Check disable and enable in encoding scheme
-
-4. Another window to preview the NN
-
 5. Make the evolve process 
 
-6. clean code
+6. clean code "User define glObjects to objects.h file"
 
 7. optimized it (try to replace "raw loops" with "monadic algorithms loops(std::any_of)")
 */

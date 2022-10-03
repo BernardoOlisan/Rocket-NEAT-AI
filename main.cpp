@@ -5,7 +5,8 @@
 
 #include "model.h"
 
-RocketNN Rocket;
+RocketNN Rocket1;
+// RocketNN Rocket2;
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -13,14 +14,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
     
     if (key == GLFW_KEY_A && action == GLFW_REPEAT || key == GLFW_KEY_A && action == GLFW_PRESS) {
-        Rocket.angle -= 5.0; 
+        Rocket1.angle -= 5.0; 
         a = GL_TRIANGLE_FAN;
     } else {
         a = GL_LINE_STRIP;
     }
 
     if (key == GLFW_KEY_D && action == GLFW_REPEAT || key == GLFW_KEY_D && action == GLFW_PRESS) {
-        Rocket.angle += 5.0;
+        Rocket1.angle += 5.0;
         d = GL_TRIANGLE_FAN;
     } else {
         d = GL_LINE_STRIP;
@@ -50,8 +51,11 @@ int main(void) {
         atmosphere();
         keys();
 
-        Rocket.rocket(255, 255, 0);
-        Rocket.weighted_sum();
+        Rocket1.rocket(255, 255, 0);
+        Rocket1.weighted_sum();
+
+        // Rocket2.rocket(255, 0, 0);
+        // Rocket2.weighted_sum();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -63,7 +67,7 @@ int main(void) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
         glEnable( GL_BLEND );
 
-        Rocket.draw_nn();
+        Rocket1.draw_nn();
 
         glfwSwapBuffers(nn_window);
         glfwPollEvents();
