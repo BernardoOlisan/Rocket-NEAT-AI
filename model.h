@@ -9,6 +9,13 @@
 char a = GL_LINE_STRIP;
 char d = GL_LINE_STRIP;
 
+int innovation_number(int a, int b) {
+   int times = 1;
+   while (times <= b)
+      times *= 10;
+   return a*times + b;
+} 
+
 float random_number() {
     srand(time(0));
     return std::rand() % 41 + (-1);
@@ -106,9 +113,9 @@ public:
             {10, 0} // {right, value}
         },
         { // Hidden Nodes
+            {0, -10, 0}
             // {11, 0.5, 0}, // {neuron number, neuron position(0.5 is the starting), value}
-            {0, 0, 0}
-        }
+        },
     };
 
     // Connections
@@ -119,7 +126,7 @@ public:
         //     0, 
         //     0.1, 
         //     0, 
-        //     1,
+        //     110,
         // },
     };
 
@@ -404,13 +411,16 @@ public:
 
     void weighted_sum() { 
         if (!finish) { 
-            // Updating enable-disable connections value
+            // Updating enable-disable connections value and Innovation number(IN)
             for (int i = 0; i < encoding_scheme_connections.size(); i++) {
                 if (encoding_scheme_connections[i][3] > 0) {
                     encoding_scheme_connections[i][4] = 1;
                 } else {
                     encoding_scheme_connections[i][4] = 0;
                 }
+
+                // IN assign
+                encoding_scheme_connections[i][5] = innovation_number(encoding_scheme_connections[i][0], encoding_scheme_connections[i][1]);
             }
 
             // Inputs to Hiddens  
@@ -473,20 +483,6 @@ public:
                 }
             }
 
-            // DELETE THIS, is just for debug cases
-            // for (int i = 0; i < encoding_scheme_nodes[0].size(); i++) {
-            //     std::cout << "X" << encoding_scheme_nodes[0][i][0] << " = " << encoding_scheme_nodes[0][i][1] << std::endl;
-            // }
-            // std::cout << "----------Hidden NEURONS-----------" << std::endl;
-            // for (int i = 0; i < encoding_scheme_nodes[2].size(); i++) {
-            //     std::cout << "Y" << encoding_scheme_nodes[2][i][0] << " = " << encoding_scheme_nodes[2][i][2] << std::endl;       
-            // }
-            // std::cout << "----------OUTPUT NEURONS-----------" << std::endl;
-            // for (int i = 0; i < encoding_scheme_nodes[1].size(); i++) {
-            //     std::cout << "Z" << encoding_scheme_nodes[1][i][0] << " = " << encoding_scheme_nodes[1][i][1] << std::endl;
-            // }
-
-
             // Action rocket stuff
             if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
                 // std::cout << "left" << std::endl;
@@ -515,26 +511,25 @@ public:
 
 /*
 FIXME:
-5.1. If I make the initial mutation we need to add a hidden neuron :(
 */
 
 /* 
 TODO:
 5. Make the evolve process 
-DONE but Solve porblem 5.1. Make the initial mutation, only add one connection to blank population of 20 or 10
-DONE 5.2. Evaluate population, each period is going to end when it crash, then add the score to each rocket.
 5.3. Divide the population based on score and generate a new population with the well-performing half using the speciation, crossover and mutation techniques. 
-    a) destroy the bad-performing half, we stay with 10
-    b) Crossover them like this 1-10 (Crossover works with IN, we can get it like this 1->4 = 14, IN = 14) 
+    DONE a) destroy the bad-performing half, we stay with 10
+    DONE b) Crossover them like this 1-10 (Crossover works with IN, we can get it like this 1->4 = 14, IN = 14) 
                                 2-9
                                 3-8
                                 4-7
                                 5-6
-    c) we stay with 5 offspring children
+    DONE c) we stay with 5 offspring children
     d) multiply them by 4(repeat first offspring 4 times), and we end up with 20 again
     e) Mutate 20 of them randomdly again, repeat the process.
 
-6. clean code "User define glObjects to objects.h file"
+6. Let them evolve and see if it works, if not the best results are made, try to solve it?
 
-7. optimized it (try to replace "raw loops" with "monadic algorithms loops(std::any_of)")
+7. clean code "User define glObjects to objects.h file"
+
+8. optimized it (try to replace "raw loops" with "monadic algorithms loops(std::any_of)")
 */
