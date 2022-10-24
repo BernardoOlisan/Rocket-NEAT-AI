@@ -18,7 +18,7 @@ int innovation_number(int a, int b) {
 
 float random_number() {
     srand(time(0));
-    return std::rand() % 41 + (-1);
+    return -20 + rand() % (( 61 + 1 ) - 20);
 }
 
 int random_weight() {
@@ -33,7 +33,11 @@ int random_output() {
     return 9 + rand() % (( 10 + 1 ) - 9);
 }
 
-float random_point = random_number();
+int random_connection(int size) {
+    return 0 + rand() % (( size + 1 ) - 0);
+}
+
+float random_point; // 61 all right, -20 all left or use it with random_number
 int players_finished = 0;
 
 void atmosphere() {
@@ -128,6 +132,134 @@ public:
         //     0, 
         //     110,
         // },
+        // { 
+        //     1, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     110,
+        // },
+        // { 
+        //     1, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     19,
+        // },
+        // { 
+        //     2, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     210,
+        // },
+        // { 
+        //     2, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     29,
+        // },
+        // { 
+        //     3, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     310,
+        // },
+        // { 
+        //     3, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     39,
+        // },
+        // { 
+        //     4, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     410,
+        // },
+        // { 
+        //     4, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     49,
+        // },
+        // { 
+        //     5, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     510,
+        // },
+        // { 
+        //     5, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     59,
+        // },
+        // { 
+        //     6, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     610,
+        // },
+        // { 
+        //     6, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     69,
+        // },
+        // { 
+        //     7, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     710,
+        // },
+        // { 
+        //     7, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     79,
+        // },
+        // { 
+        //     8, 
+        //     10,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     810,
+        // },
+        // { 
+        //     8, 
+        //     9,
+        //     0, 
+        //     0.1, 
+        //     1, 
+        //     89,
+        // }
     };
 
 
@@ -236,12 +368,169 @@ public:
                     float(random_output()),
                     0, 
                     float(random_weight())/10, 
-                    0, 
-                    1,       
+                    1, 
+                    0,       
                 }
             );
         }
     } 
+
+
+    void rocket_mutation() {
+        /*
+        Make random choosing for mutate(adding) "hidden neuron in an old connection" = 0,
+        "a new connection" = 1.
+        */   
+        int choosed_mutation = 0 + rand() % (( 1 + 1 ) - 0);
+
+        // mutate(adding) "hidden neuron in an old connection"
+        if (choosed_mutation == 0) {
+            if (encoding_scheme_nodes[2].size() == 1 && encoding_scheme_nodes[2][0][0] == 0) { // Edit the respective invalid 1 hidden neuron
+                encoding_scheme_nodes[2][0] = {11, 0.5, 0};
+                // Adding the neuron in an old connection
+                int connection = random_connection(encoding_scheme_connections.size()-1);
+                int in_connection = encoding_scheme_connections[connection][0];
+                int out_connection = encoding_scheme_connections[connection][1];
+                float connection_weight = encoding_scheme_connections[connection][3];
+                
+                encoding_scheme_connections.push_back(
+                    {
+                        float(in_connection), 
+                        11,
+                        0, 
+                        connection_weight, 
+                        1, 
+                        float(innovation_number(in_connection, 11)),       
+                    }
+                );
+                encoding_scheme_connections.push_back(
+                    {
+                        11, 
+                        float(out_connection),
+                        0, 
+                        connection_weight, 
+                        1, 
+                        float(innovation_number(11, float(out_connection))),       
+                    }
+                );
+                /*
+                1,
+                10
+                ------converted to 2 new
+                1,
+                11
+                ---
+                11,
+                10
+                */
+                encoding_scheme_connections[connection][4] = 0; // Disable the old connection
+
+            } else { // if the invalid hidden was already fixed, do this
+                int neuron_number = encoding_scheme_nodes[2].size()+11;
+                encoding_scheme_nodes[2].push_back(
+                    {float(neuron_number), 0.5, 0} 
+                ); 
+                // Adding the neuron in an old connection
+                int connection = random_connection(encoding_scheme_connections.size()-1);
+                int in_connection = encoding_scheme_connections[connection][0];
+                int out_connection = encoding_scheme_connections[connection][1]; // transfer the old weight
+                float connection_weight = encoding_scheme_connections[connection][3];
+                
+                encoding_scheme_connections.push_back(
+                    {
+                        float(in_connection), 
+                        float(neuron_number),
+                        0, 
+                        connection_weight, 
+                        1, 
+                        float(innovation_number(in_connection, neuron_number)),       
+                    }
+                );
+                encoding_scheme_connections.push_back(
+                    {
+                        float(neuron_number), 
+                        float(out_connection),
+                        0, 
+                        connection_weight, 
+                        1, 
+                        float(innovation_number(neuron_number, out_connection)),       
+                    }
+                );
+                /*
+                1,
+                10
+                ------converted to 2 new
+                1,
+                11
+                ---
+                11,
+                10
+                */
+                encoding_scheme_connections[connection][4] = 0; // Disable the old connection
+            }
+
+        } 
+        // mutate(adding) "adding a new connection"
+        if (choosed_mutation == 1) { 
+            if (encoding_scheme_nodes[2].size() == 1 && encoding_scheme_nodes[2][0][0] == 0) {
+                int in_connection = random_input();
+                int out_connection = random_output();
+                encoding_scheme_connections.push_back(
+                    {
+                        float(in_connection), 
+                        float(out_connection),
+                        0, 
+                        float(random_weight())/10, 
+                        1, 
+                        float(innovation_number(in_connection, out_connection)),       
+                    }
+                );
+            } else {
+                // type of connection: 0 = input to output, 1 = input to hidden, 2 = hidden to output
+                int type_of_connection = 0 + rand() % (( 2 + 1 ) - 0);
+                if (type_of_connection == 0) {
+                    int in_connection = random_input();
+                    int out_connection = random_output();
+                    encoding_scheme_connections.push_back(
+                        {
+                            float(in_connection), 
+                            float(out_connection),
+                            0, 
+                            float(random_weight())/10, 
+                            1, 
+                            float(innovation_number(in_connection, out_connection)),       
+                        }
+                    );
+                } else if (type_of_connection == 1) {
+                    int random_hidd = 11 + rand() % (((encoding_scheme_nodes[2].size() + 10) + 1 ) - 11);
+                    int in_connection = random_input();
+                    encoding_scheme_connections.push_back(
+                        {
+                            float(in_connection), 
+                            float(random_hidd),
+                            0, 
+                            float(random_weight())/10, 
+                            1, 
+                            float(innovation_number(in_connection, random_hidd)),       
+                        }
+                    );
+                } else if (type_of_connection == 2) {
+                    int random_hidd = 11 + rand() % (((encoding_scheme_nodes[2].size() + 10) + 1 ) - 11);
+                    int out_connection = random_output();
+                    encoding_scheme_connections.push_back(
+                        {
+                            float(random_hidd), 
+                            float(out_connection),
+                            0, 
+                            float(random_weight())/10, 
+                            1, 
+                            float(innovation_number(random_hidd, out_connection)),       
+                        }
+                    );
+                }
+            }
+        }   
+    }
 
 
     void draw_nn() {
@@ -413,16 +702,10 @@ public:
         if (!finish) { 
             // Updating enable-disable connections value and Innovation number(IN)
             for (int i = 0; i < encoding_scheme_connections.size(); i++) {
-                if (encoding_scheme_connections[i][3] > 0) {
-                    encoding_scheme_connections[i][4] = 1;
-                } else {
-                    encoding_scheme_connections[i][4] = 0;
-                }
-
                 // IN assign
                 encoding_scheme_connections[i][5] = innovation_number(encoding_scheme_connections[i][0], encoding_scheme_connections[i][1]);
             }
-
+            
             // Inputs to Hiddens  
             for (int i = 0; i < encoding_scheme_connections.size(); i++) {
                 for (int j = 0; j < encoding_scheme_nodes[2].size(); j++) {
@@ -485,14 +768,12 @@ public:
 
             // Action rocket stuff
             if (encoding_scheme_nodes[1][0][1] > encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][0][1] > 0) {
-                // std::cout << "left" << std::endl;
-                angle -= 0.01;
+                angle -= 0.02;
                 a = GL_TRIANGLE_FAN;
                 d = GL_LINE_STRIP;
 
             } else if (encoding_scheme_nodes[1][0][1] < encoding_scheme_nodes[1][1][1] && encoding_scheme_nodes[1][1][1] > 0) {
-                // std::cout << "right" << std::endl;
-                angle += 0.01;
+                angle += 0.02;
                 d = GL_TRIANGLE_FAN;
                 a = GL_LINE_STRIP;
             } 
@@ -511,25 +792,18 @@ public:
 
 /*
 FIXME:
+In the whole code, I NOTICE THIS
+2. the position of hidden neurons are extending maybe restart position in finish cycle life?
 */
+
 
 /* 
 TODO:
-5. Make the evolve process 
-5.3. Divide the population based on score and generate a new population with the well-performing half using the speciation, crossover and mutation techniques. 
-    DONE a) destroy the bad-performing half, we stay with 10
-    DONE b) Crossover them like this 1-10 (Crossover works with IN, we can get it like this 1->4 = 14, IN = 14) 
-                                2-9
-                                3-8
-                                4-7
-                                5-6
-    DONE c) we stay with 5 offspring children
-    d) multiply them by 4(repeat first offspring 4 times), and we end up with 20 again
-    e) Mutate 20 of them randomdly again, repeat the process.
-
-6. Let them evolve and see if it works, if not the best results are made, try to solve it?
-
-7. clean code "User define glObjects to objects.h file"
+7. clean code "User define glObjects to objects.h file" and random functions, order code
 
 8. optimized it (try to replace "raw loops" with "monadic algorithms loops(std::any_of)")
+
+9. Solve FIXME
+
+10. it works, but sometimes they dont get the 9.5> maybe weights mutation, 
 */
