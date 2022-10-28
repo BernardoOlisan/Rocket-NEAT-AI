@@ -104,7 +104,7 @@ public:
     // Connections
     std::vector<std::vector<float>> encoding_scheme_connections = {
         /*{ 
-            1, Input
+            1, Input 
             10, Output
             0, Out neuron position
             0.1, Weight value
@@ -612,20 +612,3 @@ public:
         }
     }
 };
-
-
-/*
-FIXME:
-In the whole code, I NOTICE THIS
-2. the position of hidden neurons are extending maybe restart position in finish cycle life?
-*/
-
-
-/* 
-TODO:
-8. optimized it (try to replace "raw loops" with "monadic algorithms loops(std::any_of)")
-
-9. Solve FIXME
-
-10. it works, but sometimes they dont get the 9.5> maybe weights mutation, 
-*/

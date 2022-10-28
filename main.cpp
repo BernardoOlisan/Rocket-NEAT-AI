@@ -109,7 +109,7 @@ int main(void) {
 
             for (int i = 0; i < species; i++) {
                 std::cout << i << " score: " << Rockets[i].score << std::endl;
-            } 
+            }
 
             // Half well performed rockets
             std::cout << "INFO: Evolution Process" << std::endl;
