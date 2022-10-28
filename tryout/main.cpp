@@ -38,7 +38,7 @@ int main(void) {
     std::ifstream f("EncodingSchemes.json");
     f >> RocketStructure;
 
-    random_point = RocketStructure["Point Position"];
+    point_position = RocketStructure["Point Position"];
     Rocket.encoding_scheme_nodes = RocketStructure["Nodes"];
     Rocket.encoding_scheme_connections = RocketStructure["Connections"];
 
