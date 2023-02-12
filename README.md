@@ -1,5 +1,5 @@
 # Rocket-NEAT-AI
-Rocket AI, using the NEAT algorithm for evolutionary process
+Yeah, is not optimized. Rocket AI, using the NEAT algorithm for evolutionary process
 
 ## How to?
 We have 2 `a.exe` files.
